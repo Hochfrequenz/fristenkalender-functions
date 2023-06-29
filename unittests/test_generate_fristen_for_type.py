@@ -7,17 +7,10 @@ import azure.functions as func
 import pytest  # type:ignore[import]
 from _pytest.logging import LogCaptureFixture  # type:ignore[import]
 
-from fristenkalender_generator.bdew_calendar_generator import (
-    FristenkalenderGenerator,
-    FristenType,
-    FristWithAttributes,
-    FristWithAttributesAndType,
-)
 from GenerateFristenForType import main
 
 
 class TestGenerateFristenForType:
-    
     @pytest.mark.parametrize(
         "ok_request, expected_log_message",
         [
@@ -44,61 +37,61 @@ class TestGenerateFristenForType:
         actual_frist = actual_fristen_list[0]
         expected = "FristWithAttributesAndType(date=datetime.date(2022, 12, 28), label='3LWT', type=<FristenType.GPKE: 'GPKE'>)"
         assert actual_frist == expected
-    
+
     @pytest.mark.parametrize(
-    "bad_request, expected_log_message",
-    [
-        pytest.param(
-            func.HttpRequest(
-                "GET",
-                "testhost/GenerateFristenForType",
-                route_params={"fristen_type": "hhhhhh"},
-                body=bytes(),
+        "bad_request, expected_log_message",
+        [
+            pytest.param(
+                func.HttpRequest(
+                    "GET",
+                    "testhost/GenerateFristenForType",
+                    route_params={"fristen_type": "hhhhhh"},
+                    body=bytes(),
+                ),
+                "Request parameter is invalid: 'hhhhhh' is not a valid fristen_type",
+                id="Wrong fristen type",
             ),
-            "Request parameter is invalid: 'hhhhhh' is not a valid fristen_type",
-            id="Wrong fristen type",
-        ),
-        pytest.param(
-            func.HttpRequest(
-                "GET",
-                "testhost/GenerateFristenForType",
-                route_params={"fristen_type": ""},
-                body=bytes(),
+            pytest.param(
+                func.HttpRequest(
+                    "GET",
+                    "testhost/GenerateFristenForType",
+                    route_params={"fristen_type": ""},
+                    body=bytes(),
+                ),
+                "Request parameter must not be empty",
+                id="Empty parameter",
             ),
-            "Request parameter must not be empty",
-            id="Empty parameter",
-        ),
-        pytest.param(
-            func.HttpRequest(
-                "GET",
-                "testhost/GenerateFristenForType",
-                route_params=None,
-                body=bytes(),
+            pytest.param(
+                func.HttpRequest(
+                    "GET",
+                    "testhost/GenerateFristenForType",
+                    route_params=None,
+                    body=bytes(),
+                ),
+                "Request parameter must not be none",
+                id="none parameter",
             ),
-            "Request parameter must not be none",
-            id="none parameter",
-        ),
-        pytest.param(
-            func.HttpRequest(
-                "GET",
-                "testhost/GenerateFristenForType",
-                route_params={},
-                body=bytes(),
+            pytest.param(
+                func.HttpRequest(
+                    "GET",
+                    "testhost/GenerateFristenForType",
+                    route_params={},
+                    body=bytes(),
+                ),
+                "Empty route params",
+                id="Empty route params",
             ),
-            "Empty route params",
-            id="Empty route params",
-        ),
-        pytest.param(
-            func.HttpRequest(
-                "GET",
-                "testhost/GenerateFristenForType",
-                body=bytes(),
+            pytest.param(
+                func.HttpRequest(
+                    "GET",
+                    "testhost/GenerateFristenForType",
+                    body=bytes(),
+                ),
+                "No route params",
+                id="No route params",
             ),
-            "No route params",
-            id="No route params",
-        )
-    ],
-)  
+        ],
+    )
     def test_bad_request(
         self,
         caplog: LogCaptureFixture,
@@ -107,6 +100,3 @@ class TestGenerateFristenForType:
     ):
         actual_response = main(bad_request)
         assert actual_response.status_code == HTTPStatus.BAD_REQUEST
-       
-      
-
