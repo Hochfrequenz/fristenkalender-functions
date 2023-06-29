@@ -10,7 +10,7 @@
         "get",
         "post"
       ],
-      "route": "GenerateFristenForType/{fristen_type}"
+      "route": "GenerateFristenForType/{year}/{fristen_type}"
     },
     {
       "type": "http",
