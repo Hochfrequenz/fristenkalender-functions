@@ -3,18 +3,13 @@ import logging
 from http import HTTPStatus
 
 import azure.functions as func
-from fristenkalender_generator.bdew_calendar_generator import (
-    FristenkalenderGenerator,
-    FristenType,
-    FristWithAttributes,
-    FristWithAttributesAndType,
-)
+from fristenkalender_generator.bdew_calendar_generator import FristenkalenderGenerator
+
 from pathlib import Path
 import tempfile
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info("Python HTTP trigger function processed a request.")
     try:
         filename = req.route_params.get("filename")
         attendee = req.route_params.get("attendee")
@@ -57,7 +52,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             print("i am here")
             file_body = ics_file.read()
         return func.HttpResponse(
-            body= file_body,
+            body=file_body,
             status_code=HTTPStatus.OK,
             mimetype="text/calendar",
         )
