@@ -7,8 +7,7 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "get",
-        "post"
+        "get"
       ],
       "route": "GenerateFristenForType/{year}/{fristen_type}"
     },
