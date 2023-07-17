@@ -58,7 +58,6 @@ class TestGenerateFristenForType:
                     route_params=None,
                     body=bytes(),
                 )
-                
             ),
             pytest.param(
                 func.HttpRequest(
@@ -74,11 +73,9 @@ class TestGenerateFristenForType:
                     "testhost/GenerateFristenForType",
                     body=bytes(),
                 )
-                
             ),
         ],
     )
-
     def test_bad_request(self, bad_request: func.HttpRequest):
         actual_response = main(bad_request)
         assert actual_response.status_code == HTTPStatus.BAD_REQUEST

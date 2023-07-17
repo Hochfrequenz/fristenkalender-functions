@@ -25,7 +25,6 @@ class TestGenerateAllFristen:
         assert actual_response.status_code == HTTPStatus.OK
         body = actual_response.get_body()
         assert body is not None
-        
 
     @pytest.mark.parametrize(
         "bad_request",
@@ -42,11 +41,10 @@ class TestGenerateAllFristen:
                 func.HttpRequest(
                     "GET",
                     "testhost/GenerateAllFristen",
-                    route_params={"year": "0"},
+                    route_params={"year": 0},
                     body=bytes(),
                 )
             ),
-            
             pytest.param(
                 func.HttpRequest(
                     "GET",
@@ -61,11 +59,9 @@ class TestGenerateAllFristen:
                     "testhost/GenerateFristenForType",
                     body=bytes(),
                 )
-                
             ),
         ],
     )
-
     def test_bad_request(self, bad_request: func.HttpRequest):
         actual_response = main(bad_request)
         assert actual_response.status_code == HTTPStatus.BAD_REQUEST
