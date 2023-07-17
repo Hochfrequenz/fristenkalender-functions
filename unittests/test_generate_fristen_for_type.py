@@ -1,10 +1,8 @@
 import json
 from http import HTTPStatus
-from typing import Optional
 
 import azure.functions as func
 import pytest  # type:ignore[import]
-from _pytest.logging import LogCaptureFixture  # type:ignore[import]
 
 from GenerateFristenForType import main
 
