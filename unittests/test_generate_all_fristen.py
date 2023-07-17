@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-import azure.functions as func
+import azure.functions as func  # type:ignore[import]
 import pytest  # type:ignore[import]
 
 from GenerateAllFristen import main

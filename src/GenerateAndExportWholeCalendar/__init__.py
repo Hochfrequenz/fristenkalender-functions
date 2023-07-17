@@ -1,12 +1,11 @@
 import json
 import logging
+import tempfile
 from http import HTTPStatus
+from pathlib import Path
 
 import azure.functions as func
 from fristenkalender_generator.bdew_calendar_generator import FristenkalenderGenerator
-
-from pathlib import Path
-import tempfile
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:

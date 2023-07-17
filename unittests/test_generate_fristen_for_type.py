@@ -1,7 +1,6 @@
+import json
 from http import HTTPStatus
 from typing import Optional
-
-import json
 
 import azure.functions as func
 import pytest  # type:ignore[import]
