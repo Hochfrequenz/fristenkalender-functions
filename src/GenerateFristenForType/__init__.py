@@ -1,3 +1,6 @@
+# we ignore the invalid module name because in this case it's ok that the module/dir has the name of the relative path
+# pylint:disable=invalid-name
+
 import json
 import logging
 from http import HTTPStatus
