@@ -5,16 +5,15 @@ expose the features of [fristenkalender_generator](https://github.com/Hochfreque
 
 ## List of Functions
 
-| HTTP Method | Function Name                                                                | Purpose                                                                                       | Parameter                                                              | Response                                            | localhost example                                                                                                                    |
-| ----------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| GET         | [`GenerateAllFristen`](src/GenerateAllFristen)                                     | generate all fristen for the given year                        | a number | a JSON list, use `&concise=True` for compact output | test with [localhost:7071](<http://localhost:7071/api/GenerateAllFristen/2023)  |
-| GET         | [`GenerateAndExportWholeCalendar`](src/GenerateAndExportWholeCalendar)                         | Generates an ics-file for a given year, with a given filename and a given attendee | a number, file_name, and email address | an ics-file                              | test with [localhost:7071](<http://localhost:7071/api/GenerateAndExportWholealendar/calendar/test@test.com/2023>)              |
-| GET        | [`GenerateFristenForType`](src/GenerateFristenForType)                                     | generate fristen for a given type and a given year | number and fristen type | a JSON list                                         | test with [localhost:7071](<http://localhost:7071/api/GenerateFristenForType/2023/GPKE>) |
+| HTTP Method | Function Name                                                          | Purpose                                                                            | Parameter                              | Response                                            | localhost example                                                                                                 |
+|-------------|------------------------------------------------------------------------|------------------------------------------------------------------------------------|----------------------------------------|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| GET         | [`GenerateAllFristen`](src/GenerateAllFristen)                         | generate all fristen for the given year                                            | a number                               | a JSON list, use `&concise=True` for compact output | test with [localhost:7071](<http://localhost:7071/api/GenerateAllFristen/2023)                                    |
+| GET         | [`GenerateAndExportWholeCalendar`](src/GenerateAndExportWholeCalendar) | Generates an ics-file for a given year, with a given filename and a given attendee | a number, file_name, and email address | an ics-file                                         | test with [localhost:7071](<http://localhost:7071/api/GenerateAndExportWholealendar/calendar/test@test.com/2023>) |
+| GET         | [`GenerateFristenForType`](src/GenerateFristenForType)                 | generate fristen for a given type and a given year                                 | number and fristen type                | a JSON list                                         | test with [localhost:7071](<http://localhost:7071/api/GenerateFristenForType/2023/GPKE>)                          |
 
-                     
 ## Scope of the Fristenkalender Functions
 
-The functions in this repository should contain  only actual logic for
+The functions in this repository should contain only actual logic for
 providing a HTTP interface to existing FristenkalenderGenerator functionality .
 
 # Local Setup / Getting Started
@@ -47,5 +46,3 @@ In case your local tox base uses Python v3.10 (and you cloned this repo before 2
 
 To pin tox to Python v3.9 we use the tox' `basepython` setting.
 Re-create the dev environment, then try again.
-
-
