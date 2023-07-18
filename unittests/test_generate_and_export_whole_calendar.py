@@ -3,7 +3,7 @@ from http import HTTPStatus
 import azure.functions as func
 import pytest  # type:ignore[import]
 
-from GenerateAndExportWholeCalendar import main
+from GenerateAndExportWholeCalendar import main  # type:ignore[import]
 
 
 class TestGenerateAndExportWholeCalendar:

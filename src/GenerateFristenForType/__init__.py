@@ -1,6 +1,6 @@
 # we ignore the invalid module name because in this case it's ok that the module/dir has the name of the relative path
 # pylint:disable=invalid-name
-
+"""Contains function generating all fristen for a given type and a given year"""
 import json
 import logging
 from http import HTTPStatus
@@ -10,18 +10,18 @@ from fristenkalender_generator.bdew_calendar_generator import FristenkalenderGen
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    """Function generating all fristen for a given type and a given year"""
     try:
         fristen_type_params = req.route_params.get("fristen_type")
         year_params = req.route_params.get("year")
 
-        if type(fristen_type_params) == str and len(fristen_type_params) != 0:
+        if isinstance(fristen_type_params, str) and len(fristen_type_params) != 0:
             fristen_type = FristenType(fristen_type_params.upper())
         else:
             raise ValueError("Fristen type should not be empty")
         if not year_params:
             raise TypeError("Year should not be empty")
-        else:
-            year = int(year_params)
+        year = int(year_params)
 
     except ValueError as value_error:
         logging.warning("Request parametr is invalid: %s", str(value_error))

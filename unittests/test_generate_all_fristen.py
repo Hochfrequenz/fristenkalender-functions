@@ -1,9 +1,9 @@
 from http import HTTPStatus
 
-import azure.functions as func  # type:ignore[import]
+import azure.functions as func
 import pytest  # type:ignore[import]
 
-from GenerateAllFristen import main
+from GenerateAllFristen import main  # type:ignore[import]
 
 
 class TestGenerateAllFristen:
@@ -41,7 +41,7 @@ class TestGenerateAllFristen:
                 func.HttpRequest(
                     "GET",
                     "testhost/GenerateAllFristen",
-                    route_params={"year": 0},
+                    route_params={"year": "0"},
                     body=bytes(),
                 )
             ),

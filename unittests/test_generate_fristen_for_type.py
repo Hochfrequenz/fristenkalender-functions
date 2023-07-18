@@ -4,7 +4,7 @@ from http import HTTPStatus
 import azure.functions as func
 import pytest  # type:ignore[import]
 
-from GenerateFristenForType import main
+from GenerateFristenForType import main  # type:ignore[import]
 
 
 class TestGenerateFristenForType:

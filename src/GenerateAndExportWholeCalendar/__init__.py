@@ -1,6 +1,6 @@
 # we ignore the invalid module name because in this case it's ok that the module/dir has the name of the relative path
 # pylint:disable=invalid-name
-
+"""Contains function generating an isc-file for the given year with the given filename and a given attendee"""
 import json
 import logging
 import tempfile
@@ -12,6 +12,7 @@ from fristenkalender_generator.bdew_calendar_generator import FristenkalenderGen
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    """Function generating an isc-file"""
     try:
         filename = req.route_params.get("filename")
         attendee = req.route_params.get("attendee")
@@ -22,8 +23,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             raise ValueError("Attendee should not be empty")
         if not year_params:
             raise TypeError("Year should not be empty")
-        else:
-            year = int(year_params)
+        year = int(year_params)
     except TypeError as type_err:
         logging.warning("Request parametr is invalid: %s", str(type_err))
         return func.HttpResponse(
@@ -59,6 +59,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="text/calendar",
         )
     except TypeError as type_error:
-        print(type_error)
-    except Exception as general_error:
-        print(general_error)
+        logging.warning("Request param was invalid: %s", str(type_error))
+        return func.HttpResponse(
+            body=json.dumps({"error": str(type_error), "code": HTTPStatus.BAD_REQUEST}),
+            status_code=HTTPStatus.BAD_REQUEST,
+            mimetype="application/json",
+        )
