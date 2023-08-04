@@ -16,12 +16,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if not year_params:
             raise ValueError("Year should not be empty")
         year = int(year_params)
-        if not year_params.isnumeric():
-            raise ValueError(f"Parameter '{year_params}' is not numeric")
+        
 
     except ValueError as value_error:
         # parsing the strings to their enum value may raise a value error
-        logging.warning("Request param was invalid: %s", str(value_error))
+        logging.warning("Request parameter was invalid: %s", str(value_error))
         return func.HttpResponse(
             body=json.dumps({"error": str(value_error), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,
@@ -42,14 +41,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="application/json",
         )
     except TypeError as type_error:
-        logging.warning("Request param is invalid: %s", str(type_error))
+        logging.warning("Request parameter is invalid: %s", str(type_error))
         return func.HttpResponse(
             body=json.dumps({"error": str(type_error), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,
             mimetype="application/json",
         )
     except ValueError as value_error:
-        logging.warning("Param is out of range: %s", str(value_error))
+        logging.warning("Parameter is out of range: %s", str(value_error))
         return func.HttpResponse(
             body=json.dumps({"error": str(value_error), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,

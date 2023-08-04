@@ -31,7 +31,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="application/json",
         )
     except TypeError as type_error:
-        logging.warning("Request parametr is invalid: %s", str(type_error))
+        logging.warning("Request parameter is invalid: %s", str(type_error))
         return func.HttpResponse(
             body=json.dumps({"error": str(type_error), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,

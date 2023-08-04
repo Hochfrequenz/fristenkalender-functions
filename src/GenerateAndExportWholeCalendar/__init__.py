@@ -18,21 +18,21 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         attendee = req.route_params.get("attendee")
         year_params = req.route_params.get("year")
         if not filename:
-            raise ValueError("filename should not be empty")
+            raise ValueError("Filename should not be empty")
         if not attendee:
             raise ValueError("Attendee should not be empty")
         if not year_params:
             raise TypeError("Year should not be empty")
         year = int(year_params)
     except TypeError as type_err:
-        logging.warning("Request parametr is invalid: %s", str(type_err))
+        logging.warning("Request parameter is invalid: %s", str(type_err))
         return func.HttpResponse(
             body=json.dumps({"error": str(type_err), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,
             mimetype="application/json",
         )
     except ValueError as val_error:
-        logging.warning("Request parametr is invalid: %s", str(val_error))
+        logging.warning("Request parameter is invalid: %s", str(val_error))
         return func.HttpResponse(
             body=json.dumps({"error": str(val_error), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,
@@ -51,7 +51,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             local_ics_file_path = Path(tmp_file.name)
             FristenkalenderGenerator().generate_and_export_whole_calendar(local_ics_file_path, attendee, year)
         with open(local_ics_file_path, "rb") as ics_file:
-            print("i am here")
             file_body = ics_file.read()
         return func.HttpResponse(
             body=file_body,
@@ -59,7 +58,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="text/calendar",
         )
     except TypeError as type_error:
-        logging.warning("Request param was invalid: %s", str(type_error))
+        logging.warning("Request parameter was invalid: %s", str(type_error))
         return func.HttpResponse(
             body=json.dumps({"error": str(type_error), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,
