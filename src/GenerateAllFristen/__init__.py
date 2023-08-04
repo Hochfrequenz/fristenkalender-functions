@@ -17,7 +17,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             raise ValueError("Year should not be empty")
         year = int(year_params)
         if not year_params.isnumeric():
-            raise ValueError(f"Parametr '{year_params}' is not numeric")
+            raise ValueError(f"Parameter '{year_params}' is not numeric")
 
     except ValueError as value_error:
         # parsing the strings to their enum value may raise a value error
