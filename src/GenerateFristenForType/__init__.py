@@ -24,7 +24,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         year = int(year_params)
 
     except ValueError as value_error:
-        logging.warning("Request parametr is invalid: %s", str(value_error))
+        logging.warning("Request parameter is invalid: %s", str(value_error))
         return func.HttpResponse(
             body=json.dumps({"error": str(value_error), "code": HTTPStatus.BAD_REQUEST}),
             status_code=HTTPStatus.BAD_REQUEST,
