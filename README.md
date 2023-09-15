@@ -38,9 +38,9 @@ func start
 
 ### Troubleshooting
 
-As of 2023-07-13 Azure
+As of 2023-09-15 Azure
 Function [only supports](https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-python?tabs=asgi%2Cazurecli-linux%2Capplication-level#python-version)
-Python <=v3.9.
+also support Python 3.11 (preview).
 
 In case your local tox base uses Python v3.10 (and you cloned this repo before 2022-04-04), you'll run into an error if
 you try to start the Azure Function (the plain Python unit tests will behave normally, though):
