@@ -53,9 +53,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         with open(local_ics_file_path, "rb") as ics_file:
             file_body = ics_file.read()
         return func.HttpResponse(
-            headers={
-                'Content-Disposition':f'attachment; filename="{filename}.ics"'
-            },
+            headers={"Content-Disposition": f'attachment; filename="{filename}.ics"'},
             body=file_body,
             status_code=HTTPStatus.OK,
             mimetype="text/calendar",

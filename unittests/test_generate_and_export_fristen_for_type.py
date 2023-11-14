@@ -46,7 +46,10 @@ class TestGenerateAndExportFristenForType:
         [
             pytest.param(
                 func.HttpRequest(
-                    "GET", "testhost", body=bytes(), route_params={"filename": "foo", "attendee": "bar@bar", "year": "2023", "fristen_type":"gpke"}
+                    "GET",
+                    "testhost",
+                    body=bytes(),
+                    route_params={"filename": "foo", "attendee": "bar@bar", "year": "2023", "fristen_type": "gpke"},
                 )
             ),
         ],

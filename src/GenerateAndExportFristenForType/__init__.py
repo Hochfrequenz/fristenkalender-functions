@@ -55,13 +55,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         local_ics_file_path: Path
         with tempfile.NamedTemporaryFile(mode="w+", suffix=".ics", delete=False) as tmp_file:
             local_ics_file_path = Path(tmp_file.name)
-            FristenkalenderGenerator().generate_and_export_fristen_for_type(local_ics_file_path, attendee, year, fristen_type)
+            FristenkalenderGenerator().generate_and_export_fristen_for_type(
+                local_ics_file_path, attendee, year, fristen_type
+            )
         with open(local_ics_file_path, "rb") as ics_file:
             file_body = ics_file.read()
         return func.HttpResponse(
-            headers={
-                'Content-Disposition':f'attachment; filename="{filename}.ics"'
-            },
+            headers={"Content-Disposition": f'attachment; filename="{filename}.ics"'},
             body=file_body,
             status_code=HTTPStatus.OK,
             mimetype="text/calendar",
