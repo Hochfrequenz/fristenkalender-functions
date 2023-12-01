@@ -53,7 +53,6 @@ class TestGenerateAllFristen:
                     body=bytes(),
                 )
             ),
-            
         ],
     )
     def test_bad_request(self, bad_request: func.HttpRequest):
