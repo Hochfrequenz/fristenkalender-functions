@@ -38,7 +38,7 @@ jobs:
       - name: copy src dir to project root (dirty deployment hack)
         run: cp src/* ./ -r
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: python-app
           path: |
