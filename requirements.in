@@ -1,2 +1,2 @@
 azure-functions
-fristenkalender_generator
+fristenkalender_generator>=0.5.0
