@@ -19,10 +19,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".ics", delete=False) as tmp_file:
         local_ics_file_path = Path(tmp_file.name)
         FristenkalenderGenerator().generate_and_export_whole_calendar(local_ics_file_path, attendee, year)
-        tmp_file.seek(0)  # Go back to the beginning of the file to read the content
-        file_body = ics_file.read()
+        with open(local_ics_file_path, "rb") as ics_file:
+            file_body = ics_file.read()
+    headers = {
+        "Content-Type": "text/calendar; charset=utf-8",
+    }
     return func.HttpResponse(
         body=file_body,
         status_code=HTTPStatus.OK,
         mimetype="text/calendar",
+        headers=headers,
     )
