@@ -49,8 +49,8 @@ dev = [
 
 
 [project.urls]
-Changelog = "https://github.com/Hochfrequenz/python_template_repository/releases"
-Homepage = "https://github.com/Hochfrequenz/python_template_repository"
+Changelog = "https://github.com/Hochfrequenz/fristenkalender-functions/releases"
+Homepage = "https://github.com/Hochfrequenz/fristenkalender-functions"
 
 [tool.black]
 line-length = 120
