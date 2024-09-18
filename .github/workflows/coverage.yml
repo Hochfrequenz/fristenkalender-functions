@@ -1,8 +1,6 @@
 name: "Coverage"
 
-on:
-  push:
-    branches: [main]
+on: [push]
 jobs:
   coverage:
     runs-on: ${{ matrix.os }}
