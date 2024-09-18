@@ -1,6 +1,9 @@
 name: "Linting"
 
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request: {}
 jobs:
   pylint:
     name: Python Code Quality and Lint
@@ -9,7 +12,7 @@ jobs:
       matrix:
         python-version: ["3.12"]
         os: [ubuntu-latest]
-        linter-env: ["linting", "type_check"]
+        linter-env: ["linting", "type_check", "spell_check"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
