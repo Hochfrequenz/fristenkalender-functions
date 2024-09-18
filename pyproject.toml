@@ -3,7 +3,7 @@ name = "fristenkalender-functions"
 description = "A package that provides functions for the Hochfrequenz Fristenkalender, for the technical infrastrukture."
 license = { text = "MIT" }
 requires-python = ">=3.11"
-authors = [{ name = "Frederik Steinkamo", email = "frederik.steinkamp@hochfreqeunz.de" }]
+authors = [{ name = "Frederik Steinkamp", email = "frederik.steinkamp@hochfreqeunz.de" }]
 keywords = ["fristenkalender", "bdew", "hochfrequenz"]
 classifiers = [
     "Development Status :: 4 - Beta",
