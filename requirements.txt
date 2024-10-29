@@ -6,11 +6,11 @@
 #
 azure-functions==1.21.3
     # via -r requirements.in
-bdew-datetimes==0.6.0
+bdew-datetimes==0.7.1
     # via fristenkalender-generator
-fristenkalender-generator==0.8.2
+fristenkalender-generator==0.8.3
     # via -r requirements.in
-holidays==0.53
+holidays==0.59
     # via
     #   bdew-datetimes
     #   fristenkalender-generator
