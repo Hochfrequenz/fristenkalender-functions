@@ -8,7 +8,7 @@ azure-functions==1.21.3
     # via -r requirements.in
 bdew-datetimes==0.8.0
     # via fristenkalender-generator
-fristenkalender-generator==0.9.0
+fristenkalender-generator==0.10.0
     # via -r requirements.in
 holidays==0.62
     # via
