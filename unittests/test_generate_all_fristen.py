@@ -1,3 +1,4 @@
+import json
 from http import HTTPStatus
 
 import azure.functions as func
@@ -25,6 +26,14 @@ class TestGenerateAllFristen:
         assert actual_response.status_code == HTTPStatus.OK
         body = actual_response.get_body()
         assert body is not None
+        deserialized_body = json.loads(body)
+        assert isinstance(deserialized_body, list)
+        assert not isinstance(
+            deserialized_body[0], str
+        )  # should not be the python object __str__ "FristWithAttributes(date=datetime.date(2022, 12, 1), label='21WT', ref_not_in_the_same_month=10, description='NKP (VNB ⟶ MGV)')"
+        assert all(
+            isinstance(x, dict) for x in deserialized_body
+        )  # should not be the python object __str__ "FristWithAttributes(date=datetime.date(2022, 12, 1), label='21WT', ref_not_in_the_same_month=10, description='NKP (VNB ⟶ MGV)')"
 
     @pytest.mark.parametrize(
         "bad_request",

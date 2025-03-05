@@ -1,6 +1,7 @@
 # we ignore the invalid module name because in this case it's ok that the module/dir has the name of the relative path
 # pylint:disable=invalid-name
 """Contains function generating all fristen for a given type and a given year"""
+import dataclasses
 import json
 import logging
 from http import HTTPStatus
@@ -39,5 +40,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         )
 
     fristen_with_type = FristenkalenderGenerator().generate_fristen_for_type(year, fristen_type)
-    fristen_with_type_json = json.dumps(fristen_with_type, indent=4, sort_keys=True, default=str)
+    fristen_with_type_json = json.dumps(
+        [dataclasses.asdict(x) for x in fristen_with_type], indent=4, sort_keys=True, default=str
+    )
     return func.HttpResponse(body=fristen_with_type_json, status_code=HTTPStatus.OK, mimetype="application/json")
