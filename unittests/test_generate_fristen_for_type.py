@@ -26,7 +26,13 @@ class TestGenerateFristenForType:
         assert actual_response.status_code == HTTPStatus.OK
         actual_fristen_list = json.loads(actual_response.get_body().decode("utf-8"))
         actual_frist = actual_fristen_list[0]
-        expected = "FristWithAttributesAndType(date=datetime.date(2022, 12, 28), label='3LWT', ref_not_in_the_same_month=None, description='Letzter Termin Anmeldung asynchrone Bilanzierung (Strom)', fristen_type=<FristenType.GPKE: 'GPKE'>)"
+        expected = {
+            "date": "2022-12-28",
+            "description": "Letzter Termin Anmeldung asynchrone Bilanzierung (Strom)",
+            "fristen_type": "FristenType.GPKE",
+            "label": "3LWT",
+            "ref_not_in_the_same_month": None,
+        }
         assert actual_frist == expected
 
     @pytest.mark.parametrize(
