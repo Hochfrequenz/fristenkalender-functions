@@ -2,6 +2,7 @@
 
 This repository is a collection of [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/) that
 expose the features of [fristenkalender_generator](https://github.com/Hochfrequenz/fristenkalender_generator).
+It's used by the [fristenkalender-frontend](https://github.com/Hochfrequenz/fristenkalender-frontend) which is deployed to [fristenkalender.hochfrequenz.de](https://fristenkalender.hochfrequenz.de/).
 
 ## List of Functions
 
