@@ -36,6 +36,36 @@ class TestGenerateFristenForType:
         assert actual_frist == expected
 
     @pytest.mark.parametrize(
+        "ok_request,expected_length",
+        [
+            pytest.param(
+                func.HttpRequest(
+                    "GET",
+                    "testhost/GenerateFristenForType",
+                    route_params={"year": "2025", "fristen_type": "GPKE"},
+                    body=bytes(),
+                ),
+                6,
+                id="No GPKE 3LWT Fristen after 24h LFW (June 2025)",
+            ),
+            pytest.param(
+                func.HttpRequest(
+                    "GET",
+                    "testhost/GenerateFristenForType",
+                    route_params={"year": "2026", "fristen_type": "GPKE"},
+                    body=bytes(),
+                ),
+                0,
+            ),
+        ],
+    )
+    def test_non_empty_get(self, ok_request: func.HttpRequest, expected_length: int):
+        actual_response = main(ok_request)
+        assert actual_response.status_code == HTTPStatus.OK
+        actual = json.loads(actual_response.get_body().decode("utf-8"))
+        assert len(actual) == expected_length
+
+    @pytest.mark.parametrize(
         "bad_request",
         [
             pytest.param(
