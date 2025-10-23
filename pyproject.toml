@@ -24,7 +24,7 @@ tests = [
     "pytest==8.4.2"
 ]
 linting = [
-    "pylint==4.0.0"
+    "pylint==4.0.2"
 ]
 type_check = [
     "mypy==1.18.2"
@@ -33,7 +33,7 @@ spell_check = [
     "codespell==2.4.1"
 ]
 coverage = [
-    "coverage==7.10.7"
+    "coverage==7.11.0"
 ]
 formatting = [
     "black==25.9.0",
