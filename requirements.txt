@@ -10,7 +10,7 @@ bdew-datetimes==0.9.1
     # via fristenkalender-generator
 fristenkalender-generator==1.0.2
     # via -r requirements.in
-holidays==0.83
+holidays==0.86
     # via
     #   bdew-datetimes
     #   fristenkalender-generator
