@@ -6,7 +6,7 @@
 #
 azure-functions==1.24.0
     # via -r requirements.in
-bdew-datetimes==0.9.1
+bdew-datetimes==0.10.0
     # via fristenkalender-generator
 fristenkalender-generator==1.0.2
     # via -r requirements.in
