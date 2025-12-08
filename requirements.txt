@@ -14,7 +14,7 @@ holidays==0.83
     # via
     #   bdew-datetimes
     #   fristenkalender-generator
-icalendar==6.3.1
+icalendar==6.3.2
     # via fristenkalender-generator
 markupsafe==3.0.3
     # via werkzeug
