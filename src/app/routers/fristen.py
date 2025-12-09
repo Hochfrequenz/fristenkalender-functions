@@ -81,3 +81,45 @@ def generate_and_export_whole_calendar(
     except TypeError as error:
         logging.warning("Request parameter was invalid: %s", str(error))
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
+
+
+@router.get("/GenerateAndExportFristenForType/{filename}/{attendee}/{year}/{fristen_type}")
+def generate_and_export_fristen_for_type(
+    filename: str = Path(..., description="Filename for the ICS file (without extension)"),
+    attendee: str = Path(..., description="Email address of the attendee"),
+    year: int = Path(..., description="Year to generate calendar for"),
+    fristen_type: str = Path(..., description="Type of fristen (e.g., GPKE)"),
+):
+    """Generate an ICS file for fristen of a given type for a given year."""
+    try:
+        if not fristen_type:
+            raise ValueError("Fristen type should not be empty")
+        fristen_type_enum = FristenType(fristen_type.upper())
+    except ValueError as error:
+        logging.warning("Request parameter is invalid: %s", str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
+
+    logging.info(
+        "Generating an ics-calendar with parameters path='%s', attendee='%s' year='%s' fristen_type='%s'",
+        filename,
+        attendee,
+        year,
+        fristen_type_enum,
+    )
+
+    try:
+        with tempfile.NamedTemporaryFile(mode="w+", suffix=".ics", delete=False) as tmp_file:
+            local_ics_file_path = FilePath(tmp_file.name)
+            FristenkalenderGenerator().generate_and_export_fristen_for_type(
+                local_ics_file_path, attendee, year, fristen_type_enum
+            )
+
+        return FileResponse(
+            path=local_ics_file_path,
+            filename=f"{filename}.ics",
+            media_type="text/calendar",
+            background=BackgroundTask(lambda: local_ics_file_path.unlink()),
+        )
+    except TypeError as error:
+        logging.warning("Request parameter was invalid: %s", str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
