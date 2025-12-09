@@ -2,10 +2,12 @@
 import dataclasses
 import json
 import logging
+import tempfile
 from http import HTTPStatus
+from pathlib import Path as FilePath
 
 from fastapi import APIRouter, HTTPException, Path
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fristenkalender_generator.bdew_calendar_generator import FristenkalenderGenerator, FristenType
 
 router = APIRouter(prefix="/api")
@@ -48,3 +50,32 @@ def generate_fristen_for_type(
         content=json.loads(json.dumps(fristen_serialized, indent=4, sort_keys=True, default=str)),
         status_code=HTTPStatus.OK,
     )
+
+
+@router.get("/GenerateAndExportWholeCalendar/{filename}/{attendee}/{year}")
+def generate_and_export_whole_calendar(
+    filename: str = Path(..., description="Filename for the ICS file (without extension)"),
+    attendee: str = Path(..., description="Email address of the attendee"),
+    year: int = Path(..., description="Year to generate calendar for"),
+):
+    """Generate an ICS file for the whole calendar for a given year."""
+    logging.info(
+        "Generating an ics-calendar with parameters path='%s', attendee='%s' year='%s'",
+        filename,
+        attendee,
+        year,
+    )
+
+    try:
+        with tempfile.NamedTemporaryFile(mode="w+", suffix=".ics", delete=False) as tmp_file:
+            local_ics_file_path = FilePath(tmp_file.name)
+            FristenkalenderGenerator().generate_and_export_whole_calendar(local_ics_file_path, attendee, year)
+
+        return FileResponse(
+            path=local_ics_file_path,
+            filename=f"{filename}.ics",
+            media_type="text/calendar",
+        )
+    except TypeError as error:
+        logging.warning("Request parameter was invalid: %s", str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
