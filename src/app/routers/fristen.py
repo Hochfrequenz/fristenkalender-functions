@@ -9,6 +9,7 @@ from pathlib import Path as FilePath
 from fastapi import APIRouter, HTTPException, Path
 from fastapi.responses import FileResponse, JSONResponse
 from fristenkalender_generator.bdew_calendar_generator import FristenkalenderGenerator, FristenType
+from starlette.background import BackgroundTask
 
 router = APIRouter(prefix="/api")
 
@@ -75,6 +76,7 @@ def generate_and_export_whole_calendar(
             path=local_ics_file_path,
             filename=f"{filename}.ics",
             media_type="text/calendar",
+            background=BackgroundTask(lambda: local_ics_file_path.unlink()),
         )
     except TypeError as error:
         logging.warning("Request parameter was invalid: %s", str(error))
