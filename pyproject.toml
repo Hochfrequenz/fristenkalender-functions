@@ -16,8 +16,8 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "fastapi",
-    "fristenkalender-generator",
+    "fastapi[standard]",
+    "fristenkalender-generator==1.0.2",
 ]
 dynamic = ["readme", "version"]
 
