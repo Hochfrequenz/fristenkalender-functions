@@ -1,30 +1,18 @@
-import json
 from http import HTTPStatus
 
-import azure.functions as func
-import pytest  # type:ignore[import]
+import pytest
+from fastapi.testclient import TestClient
 
-from GenerateFristenForType import main  # type:ignore[import]
+from app.main import app
+
+client = TestClient(app)
 
 
 class TestGenerateFristenForType:
-    @pytest.mark.parametrize(
-        "ok_request",
-        [
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    route_params={"year": "2023", "fristen_type": "GPKE"},
-                    body=bytes(),
-                )
-            ),
-        ],
-    )
-    def test_ok_get(self, ok_request: func.HttpRequest):
-        actual_response = main(ok_request)
-        assert actual_response.status_code == HTTPStatus.OK
-        actual_fristen_list = json.loads(actual_response.get_body().decode("utf-8"))
+    def test_ok_get(self):
+        response = client.get("/api/GenerateFristenForType/2023/GPKE")
+        assert response.status_code == HTTPStatus.OK
+        actual_fristen_list = response.json()
         actual_frist = actual_fristen_list[0]
         expected = {
             "date": "2022-12-28",
@@ -36,79 +24,24 @@ class TestGenerateFristenForType:
         assert actual_frist == expected
 
     @pytest.mark.parametrize(
-        "ok_request,expected_length",
+        "year,fristen_type,expected_length",
         [
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    route_params={"year": "2025", "fristen_type": "GPKE"},
-                    body=bytes(),
-                ),
-                6,
-                id="No GPKE 3LWT Fristen after 24h LFW (June 2025)",
-            ),
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    route_params={"year": "2026", "fristen_type": "GPKE"},
-                    body=bytes(),
-                ),
-                0,
-            ),
+            pytest.param("2025", "GPKE", 6, id="No GPKE 3LWT Fristen after 24h LFW (June 2025)"),
+            pytest.param("2026", "GPKE", 0),
         ],
     )
-    def test_non_empty_get(self, ok_request: func.HttpRequest, expected_length: int):
-        actual_response = main(ok_request)
-        assert actual_response.status_code == HTTPStatus.OK
-        actual = json.loads(actual_response.get_body().decode("utf-8"))
+    def test_non_empty_get(self, year: str, fristen_type: str, expected_length: int):
+        response = client.get(f"/api/GenerateFristenForType/{year}/{fristen_type}")
+        assert response.status_code == HTTPStatus.OK
+        actual = response.json()
         assert len(actual) == expected_length
 
     @pytest.mark.parametrize(
-        "bad_request",
+        "year,fristen_type",
         [
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    route_params={"year": "2023", "fristen_type": "hhhhhh"},
-                    body=bytes(),
-                )
-            ),
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    route_params={"year": "2023", "fristen_type": ""},
-                    body=bytes(),
-                )
-            ),
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    route_params=None,
-                    body=bytes(),
-                )
-            ),
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    route_params={},
-                    body=bytes(),
-                )
-            ),
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost/GenerateFristenForType",
-                    body=bytes(),
-                )
-            ),
+            pytest.param("2023", "hhhhhh"),
         ],
     )
-    def test_bad_request(self, bad_request: func.HttpRequest):
-        actual_response = main(bad_request)
-        assert actual_response.status_code == HTTPStatus.BAD_REQUEST
+    def test_bad_request(self, year: str, fristen_type: str):
+        response = client.get(f"/api/GenerateFristenForType/{year}/{fristen_type}")
+        assert response.status_code == HTTPStatus.BAD_REQUEST
