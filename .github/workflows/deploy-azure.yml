@@ -3,16 +3,7 @@ name: Deploy to Azure Container Apps
 on:
   release:
     types:
-      - created
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-          - production
+      - published
 
 permissions:
   id-token: write
@@ -30,11 +21,7 @@ jobs:
 
       - name: Get version tag
         run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            VERSION=$(echo ${GITHUB_REF#refs/tags/})
-          else
-            VERSION=$(git describe --tags --always)
-          fi
+          VERSION=$(echo ${GITHUB_REF#refs/tags/})
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update version.json
