@@ -50,6 +50,10 @@ jobs:
       - name: Install Aspire workload
         run: dotnet workload install aspire
 
+      - name: Restore workloads for AppHost
+        run: dotnet workload restore
+        working-directory: infra/aspire/FristenkalenderFunctions.AppHost
+
       - name: Install Azure Developer CLI
         uses: Azure/setup-azd@v2
 
