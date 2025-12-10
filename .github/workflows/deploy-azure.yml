@@ -4,6 +4,16 @@ on:
   release:
     types:
       - published
+      - created
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
 
 permissions:
   id-token: write
@@ -21,14 +31,17 @@ jobs:
 
       - name: Get version tag
         run: |
-          VERSION=$(echo ${GITHUB_REF#refs/tags/})
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION=$(echo ${GITHUB_REF#refs/tags/})
+          else
+            VERSION=$(git describe --tags --always)
+          fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update version.json
         run: |
           chmod +x ./scripts/update_version.sh
           ./scripts/update_version.sh
-
       - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
         with:
