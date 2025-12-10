@@ -11,7 +11,8 @@
       "WebSearch",
       "Bash(git checkout:*)",
       "Bash(git show:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(pip install:*)"
     ]
   }
 }
