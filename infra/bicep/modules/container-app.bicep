@@ -35,6 +35,19 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         targetPort: 80
         transport: 'auto'
         allowInsecure: false
+        corsPolicy: {
+          allowedOrigins: [
+            'https://fristenkalender.hochfrequenz.de'
+            'http://localhost:3000'
+            'http://localhost:5173'
+            'https://fristenkalender.stage.hochfrequenz.de'
+            'https://brave-ocean-076b69903.4.azurestaticapps.net'
+            'https://brave-ocean-076b69903-*.westeurope.4.azurestaticapps.net'
+          ]
+          allowedMethods: ['GET', 'POST', 'OPTIONS']
+          allowedHeaders: ['*']
+          maxAge: 86400
+        }
       }
       registries: [
         {
