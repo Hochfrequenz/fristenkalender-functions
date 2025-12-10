@@ -4,6 +4,10 @@ name: fristenkalender-functions
 metadata:
   template: azd-init@1.11.0
 
+infra:
+  provider: bicep
+  path: infra/bicep
+
 # Aspire-based deployment
 services:
   app:
