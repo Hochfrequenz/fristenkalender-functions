@@ -134,3 +134,14 @@ dmypy.json
 .vscode/
 
 .python_packages
+
+# .NET / Aspire
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Azure Developer CLI
+.azure/
