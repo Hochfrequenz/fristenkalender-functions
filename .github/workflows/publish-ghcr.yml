@@ -1,0 +1,32 @@
+name: Publish Docker image to Github Container Registry GHCR
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to GHCR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v6
+      - name: get version tag
+        run: |
+          VERSION=$(echo ${GITHUB_REF#refs/tags/})
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Update version.json
+        run: |
+          chmod +x ./scripts/update_version.sh
+          ./scripts/update_version.sh
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GHCR_PUSH_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_PUSH_USER }} --password-stdin
+
+      - name: Build and push
+        run: |
+          docker build --build-arg VERSION=$VERSION -t fristenkalender-functions:$VERSION .
+          docker tag fristenkalender-functions:$VERSION ghcr.io/hochfrequenz/fristenkalender-functions:$VERSION
+          docker tag fristenkalender-functions:$VERSION ghcr.io/hochfrequenz/fristenkalender-functions:latest
+          docker push ghcr.io/hochfrequenz/fristenkalender-functions:$VERSION
+          docker push ghcr.io/hochfrequenz/fristenkalender-functions:latest

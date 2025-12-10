@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:brainstorming)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:subagent-driven-development)",
+      "Bash(git rev-parse:*)",
+      "Bash(cat:*)",
+      "WebSearch",
+      "Bash(git checkout:*)",
+      "Bash(git show:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(docker build:*)"
+    ]
+  }
+}

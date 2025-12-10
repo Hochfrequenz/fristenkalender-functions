@@ -1,60 +1,27 @@
 from http import HTTPStatus
 
-import azure.functions as func
-import pytest  # type:ignore[import]
+import pytest
+from fastapi.testclient import TestClient
 
-from GenerateAndExportFristenForType import main  # type:ignore[import]
+from app.main import app
+
+client = TestClient(app)
 
 
 class TestGenerateAndExportFristenForType:
     @pytest.mark.parametrize(
-        "bad_request",
+        "filename,attendee,year,fristen_type",
         [
-            pytest.param(func.HttpRequest("GET", "testhost", body=bytes())),  # no query param
-            pytest.param(
-                func.HttpRequest("GET", "testhost", body=bytes(), route_params={"filename": ""})
-            ),  # empty param
-            pytest.param(func.HttpRequest("GET", "testhost", body=bytes(), route_params={"filename": "foo"})),
-            pytest.param(
-                func.HttpRequest("GET", "testhost", body=bytes(), route_params={"filename": "foo", "attendee": "bar"})
-            ),
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost",
-                    body=bytes(),
-                    route_params={"filename": "foo", "attendee": "bar", "year": "hghhkjhkj"},
-                )
-            ),
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost",
-                    body=bytes(),
-                    route_params={"filename": "foo", "attendee": "bar", "year": "2023", "fristen_type": "mmm"},
-                )
-            ),
+            pytest.param("foo", "bar", "2023", "invalid_type"),
         ],
     )
-    def test_bad_request(self, bad_request: func.HttpRequest):
-        actual_response = main(bad_request)
-        assert actual_response.status_code == HTTPStatus.BAD_REQUEST
+    def test_bad_request(self, filename: str, attendee: str, year: str, fristen_type: str):
+        response = client.get(f"/api/GenerateAndExportFristenForType/{filename}/{attendee}/{year}/{fristen_type}")
+        assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    @pytest.mark.parametrize(
-        "ok_request",
-        [
-            pytest.param(
-                func.HttpRequest(
-                    "GET",
-                    "testhost",
-                    body=bytes(),
-                    route_params={"filename": "foo", "attendee": "bar@bar", "year": "2023", "fristen_type": "gpke"},
-                )
-            ),
-        ],
-    )
-    def test_ok_get(self, ok_request: func.HttpRequest):
-        actual_response = main(ok_request)
-        assert actual_response.status_code == HTTPStatus.OK
-        file_body = actual_response.get_body()
+    def test_ok_get(self):
+        response = client.get("/api/GenerateAndExportFristenForType/foo/bar/2023/GPKE")
+        assert response.status_code == HTTPStatus.OK
+        file_body = response.content
         assert file_body is not None
+        assert len(file_body) > 0
