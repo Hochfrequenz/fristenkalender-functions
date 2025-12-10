@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.routers import calendar, fristen
@@ -27,6 +28,14 @@ with open(_VERSION_FILE_PATH, encoding="utf-8", mode="r") as _version_file:
 app = FastAPI(
     title="Fristenkalender API",
     description="API for generating BDEW Fristenkalender deadlines",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(fristen.router)
