@@ -30,6 +30,30 @@ fastapi dev src/app/main.py
 Then open [http://localhost:8000/docs](http://localhost:8000/docs) to view the API documentation.
 
 ## CI/CD
-Currently there is no automatic deployment to Azure.
-We maintain only 1 environment (prod) in Azure: [Azure Portal fristenkalender-backend Container App](https://portal.azure.com/#@hochfrequenz.net/resource/subscriptions/1cdc65f0-62d2-4770-be11-9ec1da950c81/resourceGroups/fristenkalender/providers/Microsoft.App/containerApps/fristenkalender-backend/containerapp).
-You have to manually bump the version there.
+
+Deployment to Azure Container Apps is automated using [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) and the [Azure Developer CLI (azd)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/).
+
+### Automatic Deployment
+
+When you publish a GitHub release, the `deploy-azure.yml` workflow automatically:
+1. Builds the Docker image
+2. Pushes it to Azure Container Registry
+3. Deploys to Azure Container Apps
+
+### Manual Deployment
+
+To deploy manually from your local machine:
+
+```bash
+# Install prerequisites
+dotnet workload install aspire
+winget install Microsoft.Azd  # or: brew install azd
+
+# Login and deploy
+azd auth login
+azd up
+```
+
+### Azure Resources
+
+- Production environment: [Azure Portal fristenkalender-backend Container App](https://portal.azure.com/#@hochfrequenz.net/resource/subscriptions/1cdc65f0-62d2-4770-be11-9ec1da950c81/resourceGroups/fristenkalender/providers/Microsoft.App/containerApps/fristenkalender-backend/containerapp)
