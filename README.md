@@ -7,7 +7,7 @@ The actual business logic for BDEW calendar calculations (working days, holidays
 
 ## Docker Image
 
-A pre-built Docker image is available on GitHub Container Registry:
+A pre-built Docker image is publicly available on the [GitHub Container Registry](https://github.com/Hochfrequenz/fristenkalender-functions/pkgs/container/fristenkalender-functions):
 
 ```bash
 docker pull ghcr.io/hochfrequenz/fristenkalender-functions:latest
@@ -16,7 +16,7 @@ docker run -p 8000:80 ghcr.io/hochfrequenz/fristenkalender-functions:latest
 
 ## API Documentation
 
-The API documentation is available at the [`/docs` endpoint (OpenAPI/Swagger UI)](https://fristenkalender-backend.nicebeach-20da7391.germanywestcentral.azurecontainerapps.io/docs).
+The API documentation is available at the [`/docs` endpoint (OpenAPI/Swagger UI)](https://fristenkalender-api.happyfield-64ecc075.westeurope.azurecontainerapps.io/docs).
 
 ## Local Setup
 
@@ -31,29 +31,14 @@ Then open [http://localhost:8000/docs](http://localhost:8000/docs) to view the A
 
 ## CI/CD
 
-Deployment to Azure Container Apps is automated using [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) and the [Azure Developer CLI (azd)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/).
-
-### Automatic Deployment
-
-When you publish a GitHub release, the `deploy-azure.yml` workflow automatically:
+When you publish a [new release in GitHub](https://github.com/Hochfrequenz/fristenkalender-functions/releases/new), the [`deploy-azure.yml`](.github/workflows/deploy-azure.yml) workflow automatically:
 1. Builds the Docker image
 2. Pushes it to Azure Container Registry
 3. Deploys to Azure Container Apps
 
-### Manual Deployment
-
-To deploy manually from your local machine:
-
-```bash
-# Install prerequisites
-dotnet workload install aspire
-winget install Microsoft.Azd  # or: brew install azd
-
-# Login and deploy
-azd auth login
-azd up
-```
+[Another workflow](.github/workflows/publish-ghcr.yml) automatically builds a Docker image and pushes it to GHCR.
+This image on GHCR is used e.g. by the [frontend](https://github.com/Hochfrequenz/fristenkalender-frontend) for its integration tests.
 
 ### Azure Resources
 
-- Production environment: [Azure Portal fristenkalender-backend Container App](https://portal.azure.com/#@hochfrequenz.net/resource/subscriptions/1cdc65f0-62d2-4770-be11-9ec1da950c81/resourceGroups/fristenkalender/providers/Microsoft.App/containerApps/fristenkalender-backend/containerapp)
+We only run 1 instance, the production environment: [Azure Portal fristenkalender-api Container App](https://portal.azure.com/#@hochfrequenz.de/resource/subscriptions/2384dcc1-2c97-4c32-932d-44215b137f7a/resourceGroups/rg-fristenkalender-prod/providers/Microsoft.App/containerApps/fristenkalender-api/containerapp) (in the `hochfrequenz.de` tenant).
