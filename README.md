@@ -28,3 +28,8 @@ fastapi dev src/app/main.py
 ```
 
 Then open [http://localhost:8000/docs](http://localhost:8000/docs) to view the API documentation.
+
+## CI/CD
+Currently there is no automatic deployment to Azure.
+We maintain only 1 environment (prod) in Azure: [Azure Portal fristenkalender-backend Container App](https://portal.azure.com/#@hochfrequenz.net/resource/subscriptions/1cdc65f0-62d2-4770-be11-9ec1da950c81/resourceGroups/fristenkalender/providers/Microsoft.App/containerApps/fristenkalender-backend/containerapp).
+You have to manually bump the version there.
