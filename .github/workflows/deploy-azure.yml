@@ -29,10 +29,10 @@ jobs:
           chmod +x ./scripts/update_version.sh
           ./scripts/update_version.sh
 
-      - name: Setup .NET 10
+      - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: '9.0.x'
 
       - name: Install Aspire workload
         run: dotnet workload install aspire
