@@ -16,7 +16,7 @@ docker run -p 8000:80 ghcr.io/hochfrequenz/fristenkalender-functions:latest
 
 ## API Documentation
 
-The API documentation is available at the `/docs` endpoint (OpenAPI/Swagger UI).
+The API documentation is available at the [`/docs` endpoint (OpenAPI/Swagger UI)](https://fristenkalender-backend.nicebeach-20da7391.germanywestcentral.azurecontainerapps.io/docs).
 
 ## Local Setup
 
