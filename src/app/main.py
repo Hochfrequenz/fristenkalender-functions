@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from app.routers import fristen
+from app.routers import calendar, fristen
 
 
 class VersionInfo(BaseModel):
@@ -30,6 +30,7 @@ app = FastAPI(
 )
 
 app.include_router(fristen.router)
+app.include_router(calendar.router)
 
 
 @app.get("/health")
