@@ -16,6 +16,10 @@ jobs:
         run: |
           VERSION=$(echo ${GITHUB_REF#refs/tags/})
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Update version.json
+        run: |
+          chmod +x ./scripts/update_version.sh
+          ./scripts/update_version.sh
       - name: Log in to GHCR
         run: echo "${{ secrets.GHCR_PUSH_TOKEN }}" | docker login ghcr.io -u hf-kklein --password-stdin
 

@@ -32,3 +32,13 @@ class TestOpenApiDocs:
         assert openapi["info"]["title"] == "Fristenkalender API"
         assert "/health" in openapi["paths"]
         assert "/api/GenerateAllFristen/{year}" in openapi["paths"]
+
+
+class TestVersionEndpoint:
+    def test_version_returns_version_info(self):
+        response = client.get("/version")
+        assert response.status_code == HTTPStatus.OK
+        version_info = response.json()
+        assert "commit_hash" in version_info
+        assert "build_date" in version_info
+        assert "tag" in version_info
