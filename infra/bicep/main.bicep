@@ -12,6 +12,9 @@ param location string
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
+@description('Container image name for the API service')
+param apiImageName string = ''
+
 // Tags that should be applied to all resources
 var tags = {
   'azd-env-name': environmentName
@@ -49,6 +52,21 @@ module containerRegistry './modules/container-registry.bicep' = {
   }
 }
 
+// Container App for API
+module api './modules/container-app.bicep' = {
+  name: 'container-app-api'
+  scope: rg
+  params: {
+    name: 'fristenkalender-api'
+    location: location
+    tags: tags
+    containerAppsEnvironmentId: containerApps.outputs.environmentId
+    imageName: !empty(apiImageName) ? apiImageName : 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+    containerRegistryLoginServer: containerRegistry.outputs.loginServer
+    containerRegistryName: containerRegistry.outputs.name
+  }
+}
+
 // Outputs for azd
 output AZURE_LOCATION string = location
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.outputs.loginServer
@@ -56,3 +74,4 @@ output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.outputs.name
 output AZURE_CONTAINER_APPS_ENVIRONMENT_ID string = containerApps.outputs.environmentId
 output AZURE_CONTAINER_APPS_ENVIRONMENT_NAME string = containerApps.outputs.environmentName
 output AZURE_RESOURCE_GROUP string = rg.name
+output SERVICE_API_ENDPOINT_URL string = 'https://${api.outputs.fqdn}'

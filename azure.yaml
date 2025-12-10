@@ -8,9 +8,10 @@ infra:
   provider: bicep
   path: infra/bicep
 
-# Aspire-based deployment
 services:
-  app:
-    language: dotnet
-    project: ./infra/aspire/FristenkalenderFunctions.AppHost/FristenkalenderFunctions.AppHost.csproj
+  api:
+    project: .
+    language: python
     host: containerapp
+    docker:
+      path: Dockerfile
