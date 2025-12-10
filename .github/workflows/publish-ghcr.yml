@@ -8,7 +8,7 @@ jobs:
   push_to_registry:
     name: Push Docker image to GHCR
     runs-on: ubuntu-latest
-
+    environment: Production
     steps:
       - name: Check out the repo
         uses: actions/checkout@v6
@@ -21,8 +21,8 @@ jobs:
           chmod +x ./scripts/update_version.sh
           ./scripts/update_version.sh
       - name: Log in to GHCR
+        # PAT has "write:packages" scope and is set in the production environment secrets section on Github
         run: echo "${{ secrets.GHCR_PUSH_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_PUSH_USER }} --password-stdin
-
       - name: Build and push
         run: |
           docker build --build-arg VERSION=$VERSION -t fristenkalender-functions:$VERSION .
