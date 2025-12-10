@@ -1,4 +1,5 @@
 """FastAPI application for Fristenkalender."""
+
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -41,3 +42,6 @@ def health():
 async def version() -> VersionInfo:
     """Returns the version of the server."""
     return _version
+
+
+__all__ = ["app"]

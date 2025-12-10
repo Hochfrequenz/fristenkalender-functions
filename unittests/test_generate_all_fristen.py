@@ -33,4 +33,4 @@ class TestGenerateAllFristen:
     )
     def test_bad_request(self, year: str):
         response = client.get(f"/api/GenerateAllFristen/{year}")
-        assert response.status_code == HTTPStatus.BAD_REQUEST
+        assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY

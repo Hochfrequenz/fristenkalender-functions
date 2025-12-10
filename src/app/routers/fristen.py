@@ -1,10 +1,12 @@
 """Router for fristen endpoints."""
+
 import dataclasses
 import json
 import logging
 import tempfile
 from http import HTTPStatus
 from pathlib import Path as FilePath
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Path
 from fastapi.responses import FileResponse, JSONResponse
@@ -15,7 +17,7 @@ router = APIRouter(prefix="/api")
 
 
 @router.get("/GenerateAllFristen/{year}")
-def generate_all_fristen(year: int = Path(..., description="Year to generate fristen for")):
+def generate_all_fristen(year: Annotated[int, Path(..., gt=1900, lt=2100, description="Year to generate fristen for")]):
     """Generate all fristen for a given year."""
     logging.info("Generating all fristen for year='%s'", year)
 
@@ -28,12 +30,12 @@ def generate_all_fristen(year: int = Path(..., description="Year to generate fri
         )
     except (TypeError, ValueError) as error:
         logging.warning("Request parameter is invalid: %s", str(error))
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error)) from error
 
 
 @router.get("/GenerateFristenForType/{year}/{fristen_type}")
 def generate_fristen_for_type(
-    year: int = Path(..., description="Year to generate fristen for"),
+    year: int = Path(..., gt=1900, lt=2100, description="Year to generate fristen for"),
     fristen_type: str = Path(..., description="Type of fristen (e.g., GPKE)"),
 ):
     """Generate fristen for a given type and year."""
@@ -43,7 +45,7 @@ def generate_fristen_for_type(
         fristen_type_enum = FristenType(fristen_type.upper())
     except ValueError as error:
         logging.warning("Request parameter is invalid: %s", str(error))
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error)) from error
 
     fristen_with_type = FristenkalenderGenerator().generate_fristen_for_type(year, fristen_type_enum)
     fristen_serialized = [dataclasses.asdict(x) for x in fristen_with_type]
@@ -57,7 +59,7 @@ def generate_fristen_for_type(
 def generate_and_export_whole_calendar(
     filename: str = Path(..., description="Filename for the ICS file (without extension)"),
     attendee: str = Path(..., description="Email address of the attendee"),
-    year: int = Path(..., description="Year to generate calendar for"),
+    year: int = Path(..., gt=1900, lt=2100, description="Year to generate calendar for"),
 ):
     """Generate an ICS file for the whole calendar for a given year."""
     logging.info(
@@ -76,19 +78,19 @@ def generate_and_export_whole_calendar(
             path=local_ics_file_path,
             filename=f"{filename}.ics",
             media_type="text/calendar",
-            background=BackgroundTask(lambda: local_ics_file_path.unlink()),
+            background=BackgroundTask(local_ics_file_path.unlink),
         )
     except TypeError as error:
         logging.warning("Request parameter was invalid: %s", str(error))
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error)) from error
 
 
 @router.get("/GenerateAndExportFristenForType/{filename}/{attendee}/{year}/{fristen_type}")
 def generate_and_export_fristen_for_type(
     filename: str = Path(..., description="Filename for the ICS file (without extension)"),
     attendee: str = Path(..., description="Email address of the attendee"),
-    year: int = Path(..., description="Year to generate calendar for"),
-    fristen_type: str = Path(..., description="Type of fristen (e.g., GPKE)"),
+    year: int = Path(..., gt=1900, lt=2100, description="Year to generate calendar for"),
+    fristen_type: Literal["MABIS", "GPKE", "GELI", "KOV"] = Path(..., description="Type of fristen (e.g., GPKE)"),
 ):
     """Generate an ICS file for fristen of a given type for a given year."""
     try:
@@ -97,7 +99,7 @@ def generate_and_export_fristen_for_type(
         fristen_type_enum = FristenType(fristen_type.upper())
     except ValueError as error:
         logging.warning("Request parameter is invalid: %s", str(error))
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error)) from error
 
     logging.info(
         "Generating an ics-calendar with parameters path='%s', attendee='%s' year='%s' fristen_type='%s'",
@@ -118,8 +120,8 @@ def generate_and_export_fristen_for_type(
             path=local_ics_file_path,
             filename=f"{filename}.ics",
             media_type="text/calendar",
-            background=BackgroundTask(lambda: local_ics_file_path.unlink()),
+            background=BackgroundTask(local_ics_file_path.unlink),
         )
     except TypeError as error:
         logging.warning("Request parameter was invalid: %s", str(error))
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error))
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(error)) from error

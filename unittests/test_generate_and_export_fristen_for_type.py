@@ -17,7 +17,7 @@ class TestGenerateAndExportFristenForType:
     )
     def test_bad_request(self, filename: str, attendee: str, year: str, fristen_type: str):
         response = client.get(f"/api/GenerateAndExportFristenForType/{filename}/{attendee}/{year}/{fristen_type}")
-        assert response.status_code == HTTPStatus.BAD_REQUEST
+        assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
     def test_ok_get(self):
         response = client.get("/api/GenerateAndExportFristenForType/foo/bar/2023/GPKE")
