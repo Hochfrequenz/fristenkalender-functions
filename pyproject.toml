@@ -24,7 +24,7 @@ dynamic = ["readme", "version"]
 
 [project.optional-dependencies]
 tests = [
-    "pytest==9.0.2",
+    "pytest==9.0.3",
     "httpx",
 ]
 linting = [
