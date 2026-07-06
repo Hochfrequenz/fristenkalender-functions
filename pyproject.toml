@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "fastapi[standard]==0.139.0",
-    "fristenkalender-generator==1.0.3",
+    "fristenkalender-generator==1.0.4",
     "holidays==0.100",
 ]
 dynamic = ["readme", "version"]
