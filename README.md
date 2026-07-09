@@ -18,6 +18,47 @@ docker run -p 8000:80 ghcr.io/hochfrequenz/fristenkalender-functions:latest
 
 The API documentation is available at the [`/docs` endpoint (OpenAPI/Swagger UI)](https://fristenkalender-api.happyfield-64ecc075.westeurope.azurecontainerapps.io/docs).
 
+## MCP Server
+
+The same app also exposes a **read-only [MCP](https://modelcontextprotocol.io/) server** at
+`/mcp`, so agents (Claude, opencode, …) can call the Fristenkalender calculations as tools.
+It wraps the REST API 1:1 via `FastMCP.from_fastapi`, so the tool set always matches the
+OpenAPI spec. Only an explicit allowlist of the non-mutating JSON endpoints becomes tools
+(the two ICS-export endpoints are excluded); every tool is annotated `readOnlyHint`.
+
+Mirroring the sibling repos [`ahbicht-functions`](https://github.com/Hochfrequenz/ahbicht-functions)
+and [`ahb-tabellen`](https://github.com/Hochfrequenz/ahb-tabellen), `/mcp` is protected by
+**Auth0 as an OAuth 2.1 resource server**: it validates Auth0-issued bearer JWTs (RS256/JWKS)
+and advertises the tenant via [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) Protected
+Resource Metadata. There is no client secret — MCP clients self-register via Auth0 Dynamic
+Client Registration and do PKCE against `auth.hochfrequenz.de`.
+
+### Configuration
+
+Auth is controlled by two environment variables (see [`.env.example`](.env.example)); set
+**both** to enable it, or **neither** to run `/mcp` unauthenticated (local dev). Setting
+exactly one fails startup on purpose.
+
+| Variable | Value |
+| --- | --- |
+| `MCP_AUTH0_ISSUER_BASE_URL` | `https://auth.hochfrequenz.de/` |
+| `MCP_AUTH0_AUDIENCE` | the canonical `/mcp` URL of the deployment (prod: `https://fristenkalender-api.happyfield-64ecc075.westeurope.azurecontainerapps.io/mcp`) |
+
+On Azure these are set from the Bicep container-app template
+([`infra/bicep/modules/container-app.bicep`](infra/bicep/modules/container-app.bicep)) and
+applied automatically on the next release deploy — not via the Azure Portal. The matching
+Auth0 API (resource server) must be created once by hand.
+
+### Verifying a deployment
+
+```bash
+EXPECT_AUTH=1 scripts/verify-mcp.sh https://fristenkalender-api.happyfield-64ecc075.westeurope.azurecontainerapps.io
+```
+
+`EXPECT_AUTH=1` makes the script *require* auth to be on: it expects a `401` plus the RFC 9728
+metadata pointing at the Hochfrequenz Auth0 tenant, and fails if `/mcp` answers unauthenticated.
+Omit it for a local dev server running without auth.
+
 ## Local Setup
 
 Install the dependencies and run the application:
