@@ -46,7 +46,7 @@ resp="$(curl -si -X POST "${BASE}/mcp" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' || true)"
 # take the LAST HTTP status line so an informational 1xx (e.g. "100 Continue") is not mistaken
 # for the real status
-status="$(printf '%s' "$resp" | grep -iE '^HTTP/' | tail -1 | sed -E 's|^HTTP/[0-9.]+ ([0-9]{3}).*|\1|')"
+status="$(printf '%s' "$resp" | grep -iE '^HTTP/' | tail -1 | sed -E 's|^HTTP/[0-9.]+ ([0-9]{3}).*|\1|' || true)"
 www_auth="$(printf '%s' "$resp" | grep -i '^www-authenticate:' || true)"
 
 case "$status" in
