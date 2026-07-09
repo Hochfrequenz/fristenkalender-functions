@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import _version, app
 
 client = TestClient(app)
 
@@ -30,6 +30,9 @@ class TestOpenApiDocs:
         assert response.status_code == HTTPStatus.OK
         openapi = response.json()
         assert openapi["info"]["title"] == "Fristenkalender API"
+        # the OpenAPI version must reflect the real deployed version, not FastAPI's default "0.1.0"
+        assert openapi["info"]["version"] != "0.1.0"
+        assert openapi["info"]["version"] == _version.tag.removeprefix("v")
         assert "/health" in openapi["paths"]
         assert "/api/GenerateAllFristen/{year}" in openapi["paths"]
 

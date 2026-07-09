@@ -47,6 +47,9 @@ with open(_VERSION_FILE_PATH, encoding="utf-8", mode="r") as _version_file:
 app = FastAPI(
     title="Fristenkalender API",
     description="API for generating BDEW Fristenkalender deadlines",
+    # surface the real deployed version (from version.json, written by the CD pipeline) in the
+    # OpenAPI spec instead of FastAPI's default "0.1.0"; drop the leading "v" of the git tag.
+    version=_version.tag.removeprefix("v"),
     lifespan=lifespan,
 )
 
