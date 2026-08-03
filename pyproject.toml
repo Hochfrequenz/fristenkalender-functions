@@ -46,7 +46,7 @@ formatting = [
 ]
 packaging = [
     "build==1.5.1",
-    "twine==6.2.0"
+    "twine==7.0.0"
 ]
 dev = [
     "pip-tools"
