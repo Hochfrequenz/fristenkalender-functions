@@ -61,11 +61,11 @@ Omit it for a local dev server running without auth.
 
 ## Local Setup
 
-Install the dependencies and run the application:
+Install the dependencies and run the application with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-pip install .
-fastapi dev src/app/main.py
+uv sync --locked --group dev
+uv run fastapi dev src/app/main.py
 ```
 
 Then open [http://localhost:8000/docs](http://localhost:8000/docs) to view the API documentation.
