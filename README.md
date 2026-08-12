@@ -64,7 +64,7 @@ Omit it for a local dev server running without auth.
 Install the dependencies and run the application with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv sync --group dev
+uv sync --locked --group dev
 uv run fastapi dev src/app/main.py
 ```
 
