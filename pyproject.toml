@@ -29,8 +29,7 @@ tests = [
     "httpx",
 ]
 linting = [
-    "pylint==4.0.6",
-    {include-group = "tests"},
+    "ruff==0.16.2",
 ]
 type_check = [
     "mypy==2.3.0",
@@ -43,10 +42,6 @@ coverage = [
     "coverage==7.15.4",
     {include-group = "tests"},
 ]
-formatting = [
-    "black==26.5.1",
-    "isort==8.0.1",
-]
 # aggregate group for local development; packaging is handled by native `uv build`/`uv publish`
 dev = [
     "pre-commit",
@@ -55,7 +50,6 @@ dev = [
     {include-group = "type_check"},
     {include-group = "spell_check"},
     {include-group = "coverage"},
-    {include-group = "formatting"},
 ]
 
 [tool.uv]
@@ -65,16 +59,60 @@ default-groups = []
 Changelog = "https://github.com/Hochfrequenz/fristenkalender-functions/releases"
 Homepage = "https://github.com/Hochfrequenz/fristenkalender-functions"
 
-[tool.black]
+[tool.ruff]
 line-length = 120
-target_version = ["py314"]
+extend-exclude = ["*.md"]
 
-[tool.isort]
-line_length = 120
-profile = "black"
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "N",
+    "PL",
+    "RUF",
+    "SIM",
+    "C4",
+    "PTH",
+    "PT",
+    "RET",
+    "ARG",
+    "TC",
+    "PIE",
+    "RSE",
+    "ISC",
+    "S",
+]
+ignore = [
+    "PLR0913", # too-many-arguments
+    "PLR0917", # too-many-positional-arguments
+    "PLR0912", # too-many-branches
+    "PLR0915", # too-many-statements
+    "PLR2004", # magic-value-comparison
+    "ISC001",  # single-line-implicit-string-concatenation (conflicts with ruff format)
+]
 
-[tool.pylint."MESSAGES CONTROL"]
-max-line-length = 120
+[tool.ruff.lint.per-file-ignores]
+# Standing globs (hand-written): cover files that do not exist yet.
+"unittests/**" = [
+    "S101",    # assert-used
+    "PLR2004", # magic-value-comparison
+]
+# Generated grandfathering: pre-existing violations in files present at migration time.
+# Zero lint churn on existing code; new/changed code is held to the full select set.
+"src/app/main.py" = ["PT018", "PTH123", "S101", "UP015", "UP035"]                 # pytest-composite-assertion, builtin-open, assert, redundant-open-modes, deprecated-import
+"src/app/mcp_server/__init__.py" = ["TC002", "UP035"]                            # typing-only-third-party-import, deprecated-import
+"src/app/mcp_server/settings.py" = ["S101", "UP037"]                             # assert, quoted-annotation
+"src/app/routers/calendar.py" = ["TC003"]                                        # typing-only-standard-library-import
+"unittests/conftest.py" = ["PT003", "UP035", "UP043"]                            # pytest-extraneous-scope-function, deprecated-import, unnecessary-default-type-args
+"unittests/test_calendar.py" = ["PT006"]                                         # pytest-parametrize-names-wrong-type
+"unittests/test_generate_and_export_fristen_for_type.py" = ["PT006"]             # pytest-parametrize-names-wrong-type
+"unittests/test_generate_and_export_whole_calendar.py" = ["PT006"]               # pytest-parametrize-names-wrong-type
+"unittests/test_generate_fristen_for_type.py" = ["PT006"]                        # pytest-parametrize-names-wrong-type
+"unittests/test_mcp_server.py" = ["PLC0415", "PT018", "S105", "UP035"]           # import-outside-top-level, pytest-composite-assertion, hardcoded-password-string, deprecated-import
 
 [mypy]
 truethy-bool = true
