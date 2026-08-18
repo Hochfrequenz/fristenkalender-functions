@@ -32,7 +32,7 @@ linting = [
     "ruff==0.16.3",
 ]
 type_check = [
-    "mypy==2.3.0",
+    "mypy==2.3.1",
     {include-group = "tests"},
 ]
 spell_check = [
