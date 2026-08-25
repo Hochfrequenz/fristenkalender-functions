@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "fastapi[standard]==0.141.1",
-    "fristenkalender-generator==1.0.5",
+    "fristenkalender-generator==1.0.6",
     "holidays==0.103",
     "fastmcp>=3.4.3",
 ]
