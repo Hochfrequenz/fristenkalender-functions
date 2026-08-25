@@ -710,7 +710,7 @@ type-check = [
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = "==0.141.1" },
     { name = "fastmcp", specifier = ">=3.4.3" },
-    { name = "fristenkalender-generator", specifier = "==1.0.5" },
+    { name = "fristenkalender-generator", specifier = "==1.0.6" },
     { name = "holidays", specifier = "==0.103" },
 ]
 
@@ -743,16 +743,16 @@ type-check = [
 
 [[package]]
 name = "fristenkalender-generator"
-version = "1.0.5"
+version = "1.0.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bdew-datetimes" },
     { name = "holidays" },
     { name = "icalendar" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0f/f9/97b68a3da134c4ba2d395bfa7f4ad0c0d10d7b51adc648b0820ffeba3556/fristenkalender_generator-1.0.5.tar.gz", hash = "sha256:1a4fcff03697b8382fdbff868be9580992a8f8fd0e7adeb0f8ac0ef41e383de0", size = 64249, upload-time = "2026-07-24T20:17:32.968Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/31/45/eb4a1708e82ac009f812a59efa653d8f82818dd8c415de7a4774968f2a56/fristenkalender_generator-1.0.6.tar.gz", hash = "sha256:337441fdfea7993e52e3544e72cb54c1cb0cbbd5fd6a8d918a7a515b9a67f1e0", size = 61606, upload-time = "2026-08-17T06:56:41.194Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/27/b43b923d1a147047ed4fe85a041435266fe262b34df9581e2b9bc7e8beef/fristenkalender_generator-1.0.5-py3-none-any.whl", hash = "sha256:3193ad7a669842cc76d7296b8f5a2f8784ccbb52d695259addb9daf7dea2a041", size = 9870, upload-time = "2026-07-24T20:17:32.11Z" },
+    { url = "https://files.pythonhosted.org/packages/04/a2/061fcd8d23e1623a0babbf76f34487ca7f31bb6e54648c3a8447996b3ea8/fristenkalender_generator-1.0.6-py3-none-any.whl", hash = "sha256:b4ea2712c5a569b62b125bfeed03e8d966e73a3c7e2052a869ace705c8dcb7b8", size = 9858, upload-time = "2026-08-17T06:56:40.235Z" },
 ]
 
 [[package]]
