@@ -16,7 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "fastapi[standard]==0.141.1",
+    "fastapi[standard]==0.142.2",
     "fristenkalender-generator==1.0.6",
     "holidays==0.105",
     "fastmcp>=3.4.3",
