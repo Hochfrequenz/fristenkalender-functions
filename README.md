@@ -32,9 +32,9 @@ and [`ahb-tabellen`](https://github.com/Hochfrequenz/ahb-tabellen), `/mcp` is pr
 and advertises the tenant via [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) Protected
 Resource Metadata. There is no client secret — MCP clients identify themselves with an OAuth
 **Client ID Metadata Document** (CIMD, a public URL hosted by the client vendor) and do PKCE
-against `auth.hochfrequenz.de`. Dynamic Client Registration is disabled on the tenant, so only
-CIMD-capable clients can connect: Claude (claude.ai / Desktop), Claude Code v2.1.81 or newer,
-VS Code (GitHub Copilot) and opencode. Other clients fail with "does not support dynamic client
+against `auth.hochfrequenz.de`. Dynamic Client Registration is disabled on the tenant, so without a
+manually created Auth0 application only CIMD-capable clients can connect; set up for this: Claude
+(claude.ai / Desktop), Claude Code v2.1.81 or newer, VS Code (GitHub Copilot) and opencode. Other clients fail with "does not support dynamic client
 registration" and need a manually created Auth0 application; how the tenant is set up (and why)
 is documented in the private repo ahbicht-functions, `docs/auth0-mcp-client-registration.md`.
 
