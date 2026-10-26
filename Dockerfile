@@ -1,5 +1,5 @@
 # copied from https://fastapi.tiangolo.com/deployment/docker/#dockerfile
-FROM python:3.14-slim
+FROM python:3.15-slim
 # the base image ships pip but no uv, so pull the uv binary from its official image (pinned)
 COPY --from=ghcr.io/astral-sh/uv:0.11.32 /uv /uvx /bin/
 # use the image's interpreter instead of downloading a managed CPython
