@@ -40,7 +40,7 @@ spell_check = [
     "codespell==2.4.3",
 ]
 coverage = [
-    "coverage==7.16.2",
+    "coverage==7.17.0",
     {include-group = "tests"},
 ]
 # aggregate group for local development; packaging is handled by native `uv build`/`uv publish`
