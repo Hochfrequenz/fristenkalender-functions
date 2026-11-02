@@ -92,8 +92,9 @@ def _build_auth(settings: McpSettings) -> AuthProvider | None:
     Build an OAuth 2.1 resource-server auth provider, or ``None`` when auth is off.
 
     We only *validate* Auth0-issued bearer JWTs (JWKS/RS256, ``iss``/``aud``/``exp``)
-    and advertise the tenant as the authorization server (RFC 9728). Clients self-register
-    via Auth0 DCR and do PKCE themselves -- no confidential client / client_secret on our side.
+    and advertise the tenant as the authorization server (RFC 9728). Clients identify themselves
+    via CIMD (Auth0 DCR is disabled) and do PKCE themselves -- no confidential client /
+    client_secret on our side.
     """
     if not settings.auth_enabled:
         _logger.warning("MCP auth is DISABLED (MCP_AUTH0_* not configured) -- do not do this in prod")
