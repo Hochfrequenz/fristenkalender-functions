@@ -243,14 +243,15 @@ def test_no_auth_middleware_when_auth_disabled(monkeypatch: pytest.MonkeyPatch) 
     assert "AuthenticationMiddleware" not in _middleware_class_names(mcp_route.app)
 
 
-def test_valid_bearer_token_is_accepted() -> None:
+def test_valid_bearer_token_is_accepted(monkeypatch: pytest.MonkeyPatch) -> None:
     """
-    End-to-end proof that the scoped auth wiring lets a *valid* token through (the case the
-    unauthenticated-401 test cannot see). Uses an HS256 verifier so the test can mint a token;
-    the /mcp route is wrapped with the same auth-middleware pattern as attach_mcp (the token
-    middleware from ``auth.get_middleware()``; the Host/RequestContext guards are omitted as
-    they are irrelevant to token validation). A valid token must get past auth (reaching the
-    session layer), not be rejected with 401.
+    End-to-end proof that the *real* ``attach_mcp`` wiring lets a valid token through (the case
+    the unauthenticated-401 test cannot see): Host guard -> token middleware -> RequireAuth ->
+    session manager, in the exact order ``attach_mcp`` rebuilds from FastMCP internals.
+
+    Only the token verifier is swapped for an HS256 one (by patching ``_build_auth``) so the test
+    can mint a token; everything else is production code. A valid token must complete an MCP
+    session and a ``tools/call``, a missing token must get 401.
     """
     import time
     from contextlib import AsyncExitStack, asynccontextmanager
@@ -258,46 +259,61 @@ def test_valid_bearer_token_is_accepted() -> None:
 
     import jwt
     from fastapi import FastAPI
-    from fastmcp import FastMCP
     from fastmcp.server.auth import JWTVerifier, RemoteAuthProvider
     from pydantic import AnyHttpUrl
-    from starlette.routing import Route
+
+    from app import mcp_server
+    from app.routers import calendar
 
     secret = "unit-test-secret-that-is-long-enough-for-hs256"  # >=32 bytes
     issuer, audience = "https://auth.hochfrequenz.de/", "http://testserver/mcp"
-    auth = RemoteAuthProvider(
-        token_verifier=JWTVerifier(public_key=secret, algorithm="HS256", issuer=issuer, audience=audience),
-        authorization_servers=[AnyHttpUrl(issuer)],
-        base_url="http://testserver",
+    _clear_auth_env(monkeypatch)
+    monkeypatch.setenv("MCP_AUTH0_ISSUER_BASE_URL", issuer)
+    monkeypatch.setenv("MCP_AUTH0_AUDIENCE", audience)  # also drives the Host guard (testserver)
+    monkeypatch.setattr(
+        mcp_server,
+        "_build_auth",
+        lambda _settings: RemoteAuthProvider(
+            token_verifier=JWTVerifier(public_key=secret, algorithm="HS256", issuer=issuer, audience=audience),
+            authorization_servers=[AnyHttpUrl(issuer)],
+            base_url="http://testserver",
+        ),
     )
-    mcp_app = FastMCP(name="test", auth=auth).http_app(path="/mcp")
-    for route in mcp_app.routes:
-        if isinstance(route, Route) and route.path == "/mcp":
-            wrapped = route.app
-            for middleware in reversed(auth.get_middleware()):
-                wrapped = middleware.cls(wrapped, *middleware.args, **middleware.kwargs)
-            route.app = wrapped
+
+    mcp_app = None
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None, Any]:
         async with AsyncExitStack() as stack:
+            assert mcp_app is not None
             await stack.enter_async_context(mcp_app.lifespan(app))
             yield
 
     host_app = FastAPI(lifespan=lifespan)
-    host_app.router.routes.extend(mcp_app.routes)
+    host_app.include_router(calendar.router)
+    mcp_app = mcp_server.attach_mcp(host_app)
+    assert mcp_app is not None
 
     token = jwt.encode(
         {"iss": issuer, "aud": audience, "sub": "tester", "iat": int(time.time()), "exp": int(time.time()) + 3600},
         secret,
         algorithm="HS256",
     )
-    headers = {"accept": "application/json, text/event-stream"}
     body = {"jsonrpc": "2.0", "id": 1, "method": "tools/list"}
     with TestClient(host_app) as client:
-        assert client.post("/mcp", headers=headers, json=body).status_code == 401  # no token
-        authed = client.post("/mcp", headers={**headers, "Authorization": f"Bearer {token}"}, json=body)
-        assert authed.status_code != 401, "a valid bearer token must pass auth (not be rejected)"
+        assert client.post("/mcp", headers=_MCP_HEADERS, json=body).status_code == 401  # no token
+        auth_headers = {"Authorization": f"Bearer {token}"}
+        session_id = _mcp_session(client, extra_headers=auth_headers)
+        result = _mcp_call(
+            client,
+            session_id,
+            call_id=2,
+            tool="is_working_day",
+            arguments={"check_date": "2024-01-01"},
+            extra_headers=auth_headers,
+        )
+    assert result["result"].get("isError") is not True, f"tool call errored: {result}"
+    assert result["result"]["structuredContent"]["is_working_day"] is False
 
 
 def test_resource_server_prm_and_401(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -343,11 +359,12 @@ def test_resource_server_prm_and_401(monkeypatch: pytest.MonkeyPatch) -> None:
 _MCP_HEADERS = {"accept": "application/json, text/event-stream", "content-type": "application/json"}
 
 
-def _mcp_session(client: TestClient) -> str:
+def _mcp_session(client: TestClient, extra_headers: dict[str, str] | None = None) -> str:
     """Open a new MCP session and return its session ID."""
+    headers = {**_MCP_HEADERS, **(extra_headers or {})}
     resp = client.post(
         "/mcp",
-        headers=_MCP_HEADERS,
+        headers=headers,
         json={
             "jsonrpc": "2.0",
             "id": 1,
@@ -364,31 +381,62 @@ def _mcp_session(client: TestClient) -> str:
     # Send the required `notifications/initialized` handshake
     client.post(
         "/mcp",
-        headers={**_MCP_HEADERS, "mcp-session-id": session_id},
+        headers={**headers, "mcp-session-id": session_id},
         json={"jsonrpc": "2.0", "method": "notifications/initialized"},
     )
     return session_id
 
 
-def _mcp_call(client: TestClient, session_id: str, call_id: int, tool: str, arguments: dict) -> dict:
-    """Invoke an MCP tool and return the parsed JSON-RPC result dict."""
+def _mcp_rpc(  # pylint: disable=too-many-arguments
+    client: TestClient,
+    session_id: str,
+    call_id: int,
+    method: str,
+    params: dict,
+    extra_headers: dict[str, str] | None = None,
+) -> dict:
+    """Send a JSON-RPC request over an MCP session and return the parsed JSON-RPC response."""
     import json
 
     resp = client.post(
         "/mcp",
-        headers={**_MCP_HEADERS, "mcp-session-id": session_id},
-        json={
-            "jsonrpc": "2.0",
-            "id": call_id,
-            "method": "tools/call",
-            "params": {"name": tool, "arguments": arguments},
-        },
+        headers={**_MCP_HEADERS, **(extra_headers or {}), "mcp-session-id": session_id},
+        json={"jsonrpc": "2.0", "id": call_id, "method": method, "params": params},
     )
-    assert resp.status_code == 200, f"MCP tools/call HTTP error: {resp.status_code} {resp.text}"
+    assert resp.status_code == 200, f"MCP {method} HTTP error: {resp.status_code} {resp.text}"
     for line in resp.text.splitlines():
         if line.startswith("data: "):
-            return json.loads(line[6:])
+            return json.loads(line[6:])  # type: ignore[no-any-return]
     raise AssertionError(f"No SSE data line found in response: {resp.text!r}")
+
+
+def _mcp_call(  # pylint: disable=too-many-arguments
+    client: TestClient,
+    session_id: str,
+    call_id: int,
+    tool: str,
+    arguments: dict,
+    extra_headers: dict[str, str] | None = None,
+) -> dict:
+    """Invoke an MCP tool and return the parsed JSON-RPC result dict."""
+    return _mcp_rpc(
+        client, session_id, call_id, "tools/call", {"name": tool, "arguments": arguments}, extra_headers=extra_headers
+    )
+
+
+def test_read_only_hint_is_on_the_wire(tester_client: TestClient) -> None:
+    """
+    Every tool in a real ``tools/list`` response must carry ``annotations.readOnlyHint == true``
+    (camelCase JSON). Complements test_all_tools_are_annotated_read_only, which only checks the
+    in-memory model: this catches the hint being lost during serialization (e.g. MCP SDK
+    field/alias changes such as the snake_case rename in SDK v2).
+    """
+    session_id = _mcp_session(tester_client)
+    result = _mcp_rpc(tester_client, session_id, call_id=2, method="tools/list", params={})
+    tools = result["result"]["tools"]
+    assert {tool["name"] for tool in tools} == set(_MCP_NAMES.values())
+    for tool in tools:
+        assert tool.get("annotations", {}).get("readOnlyHint") is True, tool["name"]
 
 
 def test_is_working_day_tool_works_over_mcp_session(tester_client: TestClient) -> None:
