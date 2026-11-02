@@ -76,7 +76,7 @@ def _build_route_map_fn() -> Callable[[Any, Any], MCPType]:
 
 def _annotate_read_only(_route: Any, component: Any) -> None:
     """
-    Tag every exposed operation as a read-only MCP tool (``readOnlyHint``).
+    Tag every exposed operation as a read-only MCP tool (``readOnlyHint`` on the wire).
 
     All our endpoints are non-mutating, and clients/LLMs use this hint to know a tool is
     safe to call without side effects. FastMCP does not set it automatically for
@@ -84,7 +84,10 @@ def _annotate_read_only(_route: Any, component: Any) -> None:
     """
     if isinstance(component, Tool):
         base = component.annotations or ToolAnnotations()
-        component.annotations = base.model_copy(update={"readOnlyHint": True})
+        # MCP SDK v2 (fastmcp>=4) uses snake_case field names; the wire format stays camelCase
+        # (``readOnlyHint``). Do not pass the camelCase alias to model_copy(update=...): pydantic
+        # does not validate/alias there, so the hint would be silently dropped.
+        component.annotations = base.model_copy(update={"read_only_hint": True})
 
 
 def _build_auth(settings: McpSettings) -> AuthProvider | None:

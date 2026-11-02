@@ -107,7 +107,7 @@ def test_all_tools_are_annotated_read_only() -> None:
     tools = asyncio.run(_build_test_mcp(app)._list_tools())  # pylint: disable=protected-access
     assert tools, "expected some tools"
     for tool in tools:
-        assert tool.annotations is not None and tool.annotations.readOnlyHint is True, tool.name
+        assert tool.annotations is not None and tool.annotations.read_only_hint is True, tool.name
 
 
 def test_tool_names_are_the_clean_remapped_ones() -> None:
