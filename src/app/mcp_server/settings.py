@@ -5,8 +5,8 @@ The MCP endpoint is an OAuth 2.1 **resource server** (mirroring
 ``Hochfrequenz/ahbicht-functions`` and ``Hochfrequenz/ahb-tabellen``): it
 *validates* Auth0-issued bearer JWTs and advertises the tenant as its
 authorization server via RFC 9728 metadata. It does **not** run the OAuth flow
-itself -- MCP clients (Claude etc.) self-register via Auth0's Dynamic Client
-Registration and do PKCE against ``auth.hochfrequenz.de``.
+itself -- MCP clients (Claude etc.) identify themselves via a Client ID Metadata
+Document (CIMD; DCR is disabled on the tenant) and do PKCE against ``auth.hochfrequenz.de``.
 
 Env vars mirror the sibling repos so cross-repo ops is uniform:
   * ``MCP_AUTH0_ISSUER_BASE_URL``  e.g. ``https://auth.hochfrequenz.de/``
