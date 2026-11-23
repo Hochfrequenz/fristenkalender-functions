@@ -1,7 +1,7 @@
 # fristenkalender-functions
 
 This repository provides an HTTP API that exposes the features of [fristenkalender_generator](https://github.com/Hochfrequenz/fristenkalender_generator) and [bdew-datetimes](https://github.com/mj0nez/bdew-datetimes) as a REST API.
-It's used by the [fristenkalender-frontend](https://github.com/Hochfrequenz/fristenkalender-frontend) which is deployed to [fristenkalender.hochfrequenz.de](https://fristenkalender.hochfrequenz.de/).
+It's used by the [fristenkalender-frontend](https://github.com/Hochfrequenz/fristenkalender-frontend) which is deployed to [fristenkalender.hochfrequenz.app](https://fristenkalender.hochfrequenz.app/).
 
 The actual business logic for BDEW calendar calculations (working days, holidays, deadlines) is implemented in the upstream packages: [fristenkalender_generator](https://github.com/Hochfrequenz/fristenkalender_generator) by [Hochfrequenz](https://github.com/Hochfrequenz) and [bdew-datetimes](https://github.com/mj0nez/bdew-datetimes) by [mj0nez](https://github.com/mj0nez).
 
