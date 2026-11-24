@@ -30,7 +30,7 @@ tests = [
     "httpx",
 ]
 linting = [
-    "ruff==0.17.5",
+    "ruff==0.17.6",
 ]
 type_check = [
     "mypy==2.4.1",
